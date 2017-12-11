@@ -1,21 +1,27 @@
-from conans import ConanFile
-from conans import CMake
+from conans import ConanFile, CMake, tools
 
 
-class ConanGTestExample(ConanFile):
-    """Build Conan GTest Example"""
-    name = "conan-gtest-example"
-    version = "0.1.0"
-    url = "https://github.com/uilianries/conan-gtest-example"
-    author = "lasote"
+class Matio(ConanFile):
+    """Build Conan matio-openmeeg"""
+    name = "matio-openmeeg"
+    version = "3.10.0"
+    url = "https://github.com/massich/conan-matio"
+    source_url = "https://github.com/openmeeg/matio-openmeeg"
+    commit_id = "ca52f9101046ef6b9d15c6ba799132f96973ea48"
+    author = "massich"
     license = "MIT"
     settings = "os", "arch", "compiler", "build_type"
     generators = "cmake"
     exports = "*"
-    description = "Google Test example of use for conan.io"
-    requires = "OpenSSL/1.0.2l@conan/stable"
+    description = "matio version of openmeeg"
+    requires = "hdf5/1.10.1-dm2@sik/testing"
     options = {"shared": [True, False]}
-    default_options = "shared=False"
+    default_options = "shared=True"
+
+    def source(self):
+        self.run("git clone {0}.git".format(self.source_url))
+        with tools.chdir("./matio-openmeeg"):
+            self.run("git checkout -f {0}".format(self.commit_id))
 
     def build(self):
         shared = {"BUILD_SHARED_LIBS": self.options.shared}
@@ -32,4 +38,4 @@ class ConanGTestExample(ConanFile):
         self.copy("*.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["encrypter"]
+        self.cpp_info.libs = ["matio-openmeeg"]
