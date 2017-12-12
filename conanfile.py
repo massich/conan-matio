@@ -26,8 +26,9 @@ class Matio(ConanFile):
     def build(self):
         shared = {"BUILD_SHARED_LIBS": self.options.shared}
         cmake = CMake(self)
-        cmake.configure(defs=shared)
-        cmake.build()
+        with tools.chdir("./matio-openmeeg"):
+            cmake.configure(defs=shared)
+            cmake.build()
 
     def package(self):
         self.copy("*.h", dst="include")
